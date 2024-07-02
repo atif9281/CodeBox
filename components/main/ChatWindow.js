@@ -33,7 +33,7 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
       setMessages([...messages, newMessage]);
       setText('');
 
-      const response = await axios.post(`http://localhost:3001/api/send_message`, {
+      const response = await axios.post(`http://localhost:3000/api/send_message`, {
         conversationId,
         message: text,
         sender: "user", 
@@ -56,7 +56,7 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
   const fetchMessagesForConversation = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3001/api/get_conversation/${id}`);
+      const response = await axios.get(`http://localhost:3000/api/get_conversation/${id}`);
       const data = response.data;
       const messages = data.conversation.map((message) => {
         if (message.sender === 'user') {

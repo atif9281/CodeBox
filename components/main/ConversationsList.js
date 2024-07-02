@@ -15,7 +15,7 @@ const ConversationsList = ({ onSelectConversation, conversationId }) => {
     setLoading(true)
 
     try {
-      const response = await axios.get('http://localhost:3001/api/getAllConversationIDs');
+      const response = await axios.get('http://localhost:3000/api/getAllConversationIDs');
       const conversationIds = response.data.map((item) => item.id);
       console.log('Fetched Conversation IDs:', conversationIds);
       setConversationIds(conversationIds);
@@ -29,7 +29,7 @@ const ConversationsList = ({ onSelectConversation, conversationId }) => {
   const handleDeleteConversation = async (id) => {
     setLoading(true)
     try {
-      await axios.delete(`http://localhost:3001/api/conversation/${id}`);
+      await axios.delete(`http://localhost:3000/api/conversation/${id}`);
       console.log(`Deleted conversation ${id}`);
       setConversationIds(conversationIds.filter((cid) => cid !== id));
     } catch (error) {

@@ -26,7 +26,7 @@ const MainBody = () => {
       // Optional: Set loading state before making the request
       setLoading(true);
   
-      const response = await axios.post('http://localhost:3001/api/start_conversation');
+      const response = await axios.post('http://localhost:3000/api/start_conversation');
       const { data } = response;
       const fetchingID = data.conversationId;
   
