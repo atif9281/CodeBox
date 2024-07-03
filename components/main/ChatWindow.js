@@ -21,6 +21,8 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
     }
   }, [conversationId]);
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (sending) return; // prevent multiple submissions
