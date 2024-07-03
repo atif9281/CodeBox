@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import ChatWindow from '@/components/main/ChatWindow';
 import ConversationsList from '@/components/main/ConversationsList';
+import NavigationButtons from './NavigationButtons';
 
 const MainBody = () => {
 
@@ -65,6 +66,7 @@ const MainBody = () => {
           </button>
         </div>
         <ConversationsList conversationId={conversationId} onSelectConversation={handleSelectConversation} />
+        <NavigationButtons></NavigationButtons>
       </aside>
       <main className="sm:ml-64 ml-0 lg:ml-64 lg:pl-4 lg:flex lg:flex-col lg:w-3/4 xl:w-3/4 mx-2 pt-5">
           <ChatWindow

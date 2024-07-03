@@ -108,7 +108,7 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
               </span>
               {message.content}
             </div>
-          ))) : (<div className='text-center m-64 text-2xl'>Write something here...</div>)}
+          ))) : (<div className='text-center m-64 text-2xl'>No messages yet.. Please write something here...</div>)}
           {sending ? <Typing /> : null}
           <div ref={messagesEndRef}></div>
         </div>
