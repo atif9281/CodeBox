@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="icon" href="/default.png" />
-        <title>My Next App</title>
+        <title>CodeBox</title>
       </head>
       <body className={inter.className}>{children}</body>
     </html>

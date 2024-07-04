@@ -6,50 +6,119 @@ import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import ChatWindow from '@/components/main/ChatWindow';
 import ConversationsList from '@/components/main/ConversationsList';
 import NavigationButtons from './NavigationButtons';
+import Cookies from 'js-cookie';
+import Logout from './Logout';
 
 const MainBody = () => {
 
   const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([]); // State to store messages
   const [loading, setLoading] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false); // Updated state name
+  const [logout, setLogout] = useState(false);
 
 
+  const getCookieValue = (cookieName) => {
+    const cookieValue = Cookies.get(cookieName);
+    return cookieValue;
+  };
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = getCookieValue('token'); // Replace 'token' with your cookie name
+      console.log(token)
+  
+      if (token) {
+        try {
+          const response = await axios.get('http://localhost:3000/api/check_authentication', {
+            withCredentials: true,
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (response.status === 200) {
+            setAuthenticated(true);
+          } else {
+            setAuthenticated(false);
+          }
+        } catch (error) {
+          console.error('Error checking authentication:', error);
+          setAuthenticated(false);
+        }
+      } else {
+        setAuthenticated(false);
+      }
+    };
+  
+    checkAuthentication();
+  }, [logout]);
+
+
+  const handleLogout = async () => {
+      console.log('clicked handlelogout')
+      try {
+        await axios.get('http://localhost:3000/api/logout');
+        // Remove the token from cookies
+        Cookies.remove('token');
+        setLogout(true);
+        // Reload the page to the / page
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    };
+
+    const handleNewChat = async () => {
+      try {
+        setLoading(true); // Set loading state before making the request
+    
+        const response = await axios.post('http://localhost:3000/api/start_conversation', {}, {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${Cookies.get('token')}` }
+        });
+    
+        const { data } = response;
+        const fetchingID = data.conversationId;
+    
+        // Update state to trigger re-render
+        setConversationId(fetchingID);
+        setMessages([]); // Clear previous messages
+    
+        setLoading(false); // Reset loading state after successful response
+      } catch (error) {
+        console.error('Error starting new conversation:', error);
+        setLoading(false); // Reset loading state on error
+      }
+    };
+
+    
+    const handleSelectConversation = (id) => {
+      setConversationId(id);
+    };
+
+  useEffect(() => {
+    const fetchLatestConversation = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/latest_conversation', {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${Cookies.get('token')}` }
+        });
+        setConversationId(response.data.conversationId);
+      } catch (error) {
+        console.error('Error fetching latest conversation:', error);
+      }
+    };
+    
+    fetchLatestConversation();
+  }, []);
 
   const handleNewMessage = (newMessage) => {
-    console.log('Adding new message:', newMessage);
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
 
 
-  const handleNewChat = async () => {
-    try {
-      // Optional: Set loading state before making the request
-      setLoading(true);
   
-      const response = await axios.post('http://localhost:3000/api/start_conversation');
-      const { data } = response;
-      const fetchingID = data.conversationId;
-  
-      // Update state to trigger re-render
-      setConversationId(fetchingID);
-      setMessages([]); // Clear previous messages
-  
-      // Optional: Reset loading state after successful response
-      setLoading(false);
-    } catch (error) {
-      console.error('Error starting new conversation:', error);
-      // Optional: Reset loading state on error
-      setLoading(false);
-    }
-  };
-  const handleSelectConversation = (id) => {
-    setConversationId(id);
-  };
 
-  console.log("messages", messages)
   return (
-    <div className="h-screen bg-gray-200 flex overflow-hidden">
+    <div>{authenticated ? (<div className="h-screen bg-gray-200 flex overflow-hidden">
       <aside className="bg-white w-64 h-screen fixed p-4">
         <div className="space-y-4">
           <div className="relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white bg-slate-500">
@@ -66,7 +135,7 @@ const MainBody = () => {
           </button>
         </div>
         <ConversationsList conversationId={conversationId} onSelectConversation={handleSelectConversation} />
-        <NavigationButtons></NavigationButtons>
+        <Logout clickingLogout={handleLogout}></Logout>
       </aside>
       <main className="sm:ml-64 ml-0 lg:ml-64 lg:pl-4 lg:flex lg:flex-col lg:w-3/4 xl:w-3/4 mx-2 pt-5">
           <ChatWindow
@@ -74,7 +143,11 @@ const MainBody = () => {
             onNewMessage={handleNewMessage}
           />
       </main>
-    </div>
+    </div>) : (<div className='text-center bg-gray-200 w-full min-h-screen flex flex-col items-center justify-center'>
+  <div className="text-2xl text-center font-bold tracking-wide text-gray-800">Please login or sign in first</div>
+  <NavigationButtons className="mt-4" /> 
+</div>)}</div>
+    
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
 
 const ConversationsList = ({ onSelectConversation, conversationId }) => {
   const [conversationIds, setConversationIds] = useState([]);
@@ -15,9 +16,11 @@ const ConversationsList = ({ onSelectConversation, conversationId }) => {
     setLoading(true)
 
     try {
-      const response = await axios.get('http://localhost:3000/api/getAllConversationIDs');
+      const response = await axios.get('http://localhost:3000/api/getAllConversationIDs', {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` }
+      });
       const conversationIds = response.data.map((item) => item.id);
-      console.log('Fetched Conversation IDs:', conversationIds);
       setConversationIds(conversationIds);
     } catch (error) {
       console.error('Error fetching conversation IDs:', error);
@@ -29,8 +32,10 @@ const ConversationsList = ({ onSelectConversation, conversationId }) => {
   const handleDeleteConversation = async (id) => {
     setLoading(true)
     try {
-      await axios.delete(`http://localhost:3000/api/conversation/${id}`);
-      console.log(`Deleted conversation ${id}`);
+      await axios.delete(`http://localhost:3000/api/conversation/${id}`, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` }
+      });
       setConversationIds(conversationIds.filter((cid) => cid !== id));
     } catch (error) {
       console.error(`Error deleting conversation ${id}:`, error);

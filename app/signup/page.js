@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -8,6 +10,10 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // State for showing password
+
+  const router = useRouter();
+
+ 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,17 +29,18 @@ const Signup = () => {
         name,
         email,
         password,
-      }, {
-        headers: { 'Content-Type': 'application/json' }
       });
 
       const data = response.data;
       console.log(data)
 
+
+
       if (data.error) {
         alert('Error occurred: ' + data.error);
       } else {
-        alert('Account created successfully!');
+        Cookies.set("token", data.token)
+        router.push("/")
       }
     } catch (error) {
       console.error('Signup error:', error);
@@ -53,7 +60,7 @@ const Signup = () => {
           <h2 className="text-center text-2xl font-bold tracking-wide text-gray-800">Sign Up</h2>
           <p className="text-center text-sm text-gray-600 mt-2">
             Already have an account?{' '}
-            <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline" title="Sign In">
+            <a href="login" className="text-blue-600 hover:text-blue-700 hover:underline" title="Sign In">
               Sign in here
             </a>
           </p>

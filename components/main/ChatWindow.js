@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Typing from '@/components/main/Typing'
+import Cookies from 'js-cookie';
 
 const ChatWindow = ({ conversationId, onNewMessage }) => {
   const [messages, setMessages] = useState([]);
@@ -10,6 +11,9 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
   const [text, setText] = useState("");
   const [error, setError] = useState(null);
   const [sending, setSending] = useState(false); // new state to track sending status
+
+
+  
   
 
  
@@ -17,7 +21,6 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
   useEffect(() => {
     if (conversationId) {
       fetchMessagesForConversation(conversationId);
-      console.log('fetched messages')
     }
   }, [conversationId]);
 
@@ -39,6 +42,9 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
         conversationId,
         message: text,
         sender: "user", 
+      }, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` }
       });
       const newMessagefrombot = {
         sender: "bot", 
@@ -58,9 +64,12 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
   const fetchMessagesForConversation = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3000/api/get_conversation/${id}`);
+      const response = await axios.get(`http://localhost:3000/api/get_conversation/${id}`, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` }
+      });
       const data = response.data;
-      const messages = data.conversation.map((message) => {
+      const messages = data.conversation.messages.map((message) => {
         if (message.sender === 'user') {
           return { sender: 'user', content: message.content };
         } else {

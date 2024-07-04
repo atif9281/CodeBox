@@ -1,23 +1,23 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // State for showing password
 
+  const router = useRouter()
   const handleSubmit = async (event) => {
     event.preventDefault();
-
 
 
     try {
       const response = await axios.post('http://localhost:3000/api/login', {
         email,
         password,
-      }, {
-        headers: { 'Content-Type': 'application/json' }
       });
 
       const data = response.data;
@@ -26,7 +26,8 @@ const Login = () => {
       if (data.error) {
         alert('Error occurred: ' + data.error);
       } else {
-        alert('Account login successfully!');
+        Cookies.set("token", data.token)
+        router.push("/")
       }
     } catch (error) {
       console.error('Signup error:', error);
@@ -41,10 +42,10 @@ const Login = () => {
     <div className="bg-gray-200 w-full min-h-screen flex items-center justify-center">
       <div className="lg:flex items-center space-x-16">
         <div className="w-5/6 md:w-3/4 lg:w-2/3 xl:w-[500px] 2xl:w-[550px] mt-8 mx-auto px-16 py-8 rounded-lg">
-          <h2 className="text-center text-2xl font-bold tracking-wide text-gray-800">Sign Up</h2>
+          <h2 className="text-center text-2xl font-bold tracking-wide text-gray-800">Sign In</h2>
           <p className="text-center text-sm text-gray-600 mt-2">
             Already have an account?{' '}
-            <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline" title="Sign In">
+            <a href="/signup" className="text-blue-600 hover:text-blue-700 hover:underline" title="Sign Up">
               Sign in here
             </a>
           </p>
@@ -98,13 +99,22 @@ const Login = () => {
               </div>
             </div>
 
+            <div className="flex items-center">
+              <input type="checkbox" name="remember_me" id="remember_me" className="mr-2 focus:ring-0 rounded" />
+              <label htmlFor="remember_me" className="text-gray-700">
+                I accept the{' '}
+                <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">terms</a> and{' '}
+                <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">privacy policy</a>
+              </label>
+            </div>
+
             
 
             
 
             <div className="my-4 flex items-center justify-end space-x-4">
               <button type="submit" className="bg-slate-500 text-white hover:bg-slate-600 rounded-lg px-8 py-2 text-gray-100 hover:shadow-xl transition duration-150 uppercase">
-                Sign in
+                Sign In
               </button>
             </div>
           </form>
