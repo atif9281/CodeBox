@@ -109,7 +109,7 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
         </button>
       </form></div>}
       {loading ? (
-        <div className='text-center m-64 text-2xl'>Loading...</div>
+        <div className='text-center m-64 text-2xl'>Loading</div>
       ) : (
         <div className="chat-window custom-scrollbar mb-24">
           {messages.length > 0 ?  (messages.map((message, index) => (
@@ -119,7 +119,7 @@ const ChatWindow = ({ conversationId, onNewMessage }) => {
               </span>
               {message.content}
             </div>
-          ))) : (<div className='text-center m-64 text-2xl'>No messages yet.. Please write something here...</div>)}
+          ))) : (<div className='text-center m-64 text-2xl'>No messages yet</div>)}
           {sending ? <Typing /> : null}
           <div ref={messagesEndRef}></div>
         </div>

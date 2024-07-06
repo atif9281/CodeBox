@@ -49,7 +49,7 @@ const ConversationsList = ({ onSelectConversation, conversationId }) => {
       <ul>
         {loading ? (
           <div className='text-center'>
-            Loading...
+            Loading
           </div>
         ) : conversationIds.map((id) => (
           <li key={id} className='mt-2 mr-1 bg-gray-200 border-b-1 border-gray-400 text-black rounded'>
